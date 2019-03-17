@@ -173,10 +173,10 @@ public class BuildCheckpoints {
         dataOutputStream.writeInt(0);  // Number of signatures to read. Do this later.
         digestOutputStream.on(true);
         dataOutputStream.writeInt(checkpoints.size());
-        ByteBuffer buffer = ByteBuffer.allocate(StoredBlock.COMPACT_SERIALIZED_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(StoredBlock.COMPACT_SERIALIZED_SIZE_ZEROCOIN);
         for (StoredBlock block : checkpoints.values()) {
             block.serializeCompact(buffer);
-            dataOutputStream.write(buffer.array());
+            dataOutputStream.write(buffer.array(), 0, block.getCompactHeaderSize());
             buffer.position(0);
         }
         dataOutputStream.close();
@@ -192,10 +192,10 @@ public class BuildCheckpoints {
         writer.println("TXT CHECKPOINTS 1");
         writer.println("0"); // Number of signatures to read. Do this later.
         writer.println(checkpoints.size());
-        ByteBuffer buffer = ByteBuffer.allocate(StoredBlock.COMPACT_SERIALIZED_SIZE);
+        ByteBuffer buffer = ByteBuffer.allocate(StoredBlock.COMPACT_SERIALIZED_SIZE_ZEROCOIN);
         for (StoredBlock block : checkpoints.values()) {
             block.serializeCompact(buffer);
-            writer.println(CheckpointManager.BASE64.encode(buffer.array()));
+            writer.println(CheckpointManager.BASE64.encode(buffer.array(), 0, block.getCompactHeaderSize()));
             buffer.position(0);
         }
         writer.close();

@@ -68,6 +68,11 @@ public class StoredBlock {
     }
 
     /**
+     * The compact header size this object wraps.
+     */
+    public int getCompactHeaderSize() { return  this.compactHeaderSize; }
+
+    /**
      * The total sum of work done in this block, and all the blocks below it in the chain. Work is a measure of how
      * many tries are needed to solve a block. If the target is set to cover 10% of the total hash value space,
      * then the work represented by a block is 10.
