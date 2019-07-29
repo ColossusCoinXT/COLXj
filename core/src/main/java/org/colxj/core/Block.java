@@ -70,6 +70,7 @@ public class Block extends Message {
      * Includes an accumulator on the block.
      */
     public static final long ZEROCOIN_BLOCK_VERSION = 5;
+    public static final long ZEROCOIN_BLOCK_VERSION6 = 6;
 
     public static final boolean ACTIVATE_ZEROCOIN = true;
 
@@ -296,7 +297,7 @@ public class Block extends Message {
             nonce = readUint32();
             //System.out.println("parse nonce: "+nonce);
             int headerSize = getHeaderSize();
-            if (isZerocoin() && length >= ZEROCOIN_HEADER_SIZE) {
+            if (isZerocoin()) {
                 // accumulator
                 zeroCoinAccumulator = readHash(true);
                 //System.out.println("parse zeroCoinAccumulator: "+zeroCoinAccumulator);
@@ -521,11 +522,16 @@ public class Block extends Message {
         return hash;
     }
 
-    public boolean isZerocoin() {
-        if (!ACTIVATE_ZEROCOIN) {
+    public boolean isZerocoin(){
+        log.warn("isZerocoin->version:"+String.valueOf(version));
+        if(!ACTIVATE_ZEROCOIN){
             return false;
-        }else {
-            return version == ZEROCOIN_BLOCK_VERSION;
+        }else{
+            if(version == ZEROCOIN_BLOCK_VERSION || version == ZEROCOIN_BLOCK_VERSION6){
+                return true;
+            }else{
+                return false;
+            }
         }
     }
 

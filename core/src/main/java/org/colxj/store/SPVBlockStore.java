@@ -172,6 +172,9 @@ public class SPVBlockStore implements BlockStore {
             buffer.put(hash.getBytes());
 
             block.serializeCompact(buffer);
+            if (!Block.isZerocoinHeight(params, block.getHeight())){
+                buffer.put(new byte[RECORD_SIZE_ZEROCOIN - RECORD_SIZE]);
+            }
             setRingCursor(buffer, buffer.position());
             blockCache.put(hash, block);
         } finally { lock.unlock(); }
@@ -200,13 +203,7 @@ public class SPVBlockStore implements BlockStore {
                 getChainHead();
             }
 
-            final int recordSize = Block.isZerocoinHeight(
-                    params,
-                    lastChainHead!=null ? lastChainHead.getHeight() : 0)
-                    ?
-                    RECORD_SIZE_ZEROCOIN
-                    :
-                    RECORD_SIZE;
+            final int recordSize = RECORD_SIZE_ZEROCOIN;
 
             do {
                 cursor -=  recordSize;

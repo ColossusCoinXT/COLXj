@@ -1505,7 +1505,7 @@ public class Peer extends PeerSocketHandler {
 
         lock.lock();
         try {
-            if (blocks.size() > 0 && downloadData && blockChain != null) {
+            if (blocks.size() > 0 && downloadData && downloadBlockBodies && blockChain != null) {
                 // Ideally, we'd only ask for the data here if we actually needed it. However that can imply a lot of
                 // disk IO to figure out what we've got. Normally peers will not send us inv for things we already have
                 // so we just re-request it here, and if we get duplicates the block chain / wallet will filter them out.
