@@ -104,6 +104,7 @@ public class CoinDefinition {
 
     //net.cpp strDNSSeed
     public static final String[] dnsSeeds = new String[] {
+            "seed.colossusxt.io",
             "seed.colossuscoinxt.org",
             "seed.colossusxt.org",
             "seed.colxt.net"
