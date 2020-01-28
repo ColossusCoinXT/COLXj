@@ -70,8 +70,6 @@ public class Block extends Message {
      * Includes an accumulator on the block.
      */
     public static final long ZEROCOIN_BLOCK_VERSION = 5;
-    public static final long ZEROCOIN_BLOCK_VERSION6 = 6;
-
     public static final boolean ACTIVATE_ZEROCOIN = true;
 
     /**
@@ -523,16 +521,10 @@ public class Block extends Message {
     }
 
     public boolean isZerocoin(){
-        log.warn("isZerocoin->version:"+String.valueOf(version));
-        if(!ACTIVATE_ZEROCOIN){
+        if (!ACTIVATE_ZEROCOIN)
             return false;
-        }else{
-            if(version == ZEROCOIN_BLOCK_VERSION || version == ZEROCOIN_BLOCK_VERSION6){
-                return true;
-            }else{
-                return false;
-            }
-        }
+        else
+            return version >= ZEROCOIN_BLOCK_VERSION;
     }
 
     public static boolean isZerocoinHeight(NetworkParameters networkParameters,long height) {
@@ -543,18 +535,17 @@ public class Block extends Message {
     }
 
     public static int getHeaderSizeByVersion(long version){
-        if (!ACTIVATE_ZEROCOIN) {
+        if (!ACTIVATE_ZEROCOIN)
             return Block.HEADER_SIZE;
-        }else {
-            return Block.ZEROCOIN_BLOCK_VERSION == version ? ZEROCOIN_HEADER_SIZE : HEADER_SIZE;
-        }
+        else
+            return version >= Block.ZEROCOIN_BLOCK_VERSION  ? ZEROCOIN_HEADER_SIZE : HEADER_SIZE;
     }
 
     public static int getHeaderSize(NetworkParameters params,long height){
         if (!ACTIVATE_ZEROCOIN) {
             return Block.HEADER_SIZE;
         }else
-            return Block.isZerocoinHeight(params,height)?Block.ZEROCOIN_HEADER_SIZE:Block.HEADER_SIZE;
+            return Block.isZerocoinHeight(params, height) ? Block.ZEROCOIN_HEADER_SIZE : Block.HEADER_SIZE;
     }
 
     /**
