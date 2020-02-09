@@ -1397,7 +1397,7 @@ public class PeerGroup implements TransactionBroadcaster {
                         chain.resetFalsePositiveEstimate();
                 }
                 // Do this last so that bloomFilter is already set when it gets called.
-                setFastCatchupTimeSecs(result.earliestKeyTimeSecs);
+                // setFastCatchupTimeSecs(result.earliestKeyTimeSecs); FIXME: in the Android it is equal to the 52075 year (1581186127111)
                 synchronized (inFlightRecalculations) {
                     inFlightRecalculations.put(mode, null);
                 }
