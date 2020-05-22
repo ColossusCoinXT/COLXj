@@ -84,6 +84,9 @@ public class Context {
         lastConstructed = this;
         // We may already have a context in our TLS slot. This can happen a lot during unit tests, so just ignore it.
         slot.set(this);
+
+        sporkManager = new SporkManager();
+        sporkManager.setSporkKey(params.getSporkKey());
     }
 
     /**
@@ -200,18 +203,11 @@ public class Context {
         return eventHorizon;
     }
 
-    //
-    // Pivx Specific
-    //
-
     public void initPivx(boolean liteMode, boolean allowInstantX) {
         this.liteMode = liteMode;
         this.allowInstantX = allowInstantX;
 
         //Pivx Specific
-        sporkManager = new SporkManager();
-        sporkManager.setSporkKey(getParams().getSporkKey());
-
         masternodePayments = new MasternodePayments(this);
         masternodeSync = new MasternodeSync(this);
         activeMasternode = new ActiveMasternode(this);
@@ -247,24 +243,21 @@ public class Context {
     {
         this.peerGroup = peerGroup;
         this.blockChain = chain;
-        if (chain!=null) {
-            //hashStore = new HashStore(chain.getBlockStore());
+
+        if (chain != null)
             chain.addListener(updateHeadListener);
-        }
-        //todo: furszy pivx init
-        if (sporkManager!=null) {
+        if (sporkManager != null)
             sporkManager.setBlockChain(chain);
+        if (masternodeManager != null)
             masternodeManager.setBlockChain(chain);
+        if (masternodeSync != null)
             masternodeSync.setBlockChain(chain);
-        }else {
-            log.error("##### Pivx init not called!, this is going to be an issue in the future");
-        }
-        if (instantSend!=null) {
+        if (instantSend != null)
             instantSend.setBlockChain(chain);
-        }
     }
 
     public boolean isLiteMode() { return liteMode; }
+
     public void setLiteMode(boolean liteMode)
     {
         boolean current = this.liteMode;
