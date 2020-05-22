@@ -209,7 +209,8 @@ public class Context {
         this.allowInstantX = allowInstantX;
 
         //Pivx Specific
-        sporkManager = new SporkManager(this);
+        sporkManager = new SporkManager();
+        sporkManager.setSporkKey(getParams().getSporkKey());
 
         masternodePayments = new MasternodePayments(this);
         masternodeSync = new MasternodeSync(this);

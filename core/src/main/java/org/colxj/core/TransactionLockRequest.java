@@ -136,7 +136,7 @@ public class TransactionLockRequest extends Transaction {
         */
     }
 
-        if(nValueOut.isGreaterThan(Coin.valueOf((int)Context.get().sporkManager.getSporkValue(SporkManager.SPORK_5_INSTANTSEND_MAX_VALUE), 0))) {
+        if(nValueOut.isGreaterThan(Coin.valueOf((int)Context.get().sporkManager.getSporkValue(SporkManager.SPORK_5_MAX_VALUE), 0))) {
             log.info("instantsend--CTxLockRequest::IsValid -- Transaction value too high: nValueOut="+nValueOut+", tx="+toString());
             return false;
         }

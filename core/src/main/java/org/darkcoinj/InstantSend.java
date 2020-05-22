@@ -123,7 +123,7 @@ public class InstantSend {
     boolean canProcessInstantXMessages()
     {
         if(context.isLiteMode() && !context.allowInstantXinLiteMode()) return false; //disable all darksend/masternode related functionality
-        if(!context.sporkManager.isSporkActive(SporkManager.SPORK_2_INSTANTSEND_ENABLED)) return false;
+        if(!context.sporkManager.isSporkActive(SporkManager.SPORK_2_SWIFTTX)) return false;
         if(!context.masternodeSync.isBlockchainSynced()) return false;
 
         return true;
@@ -314,7 +314,7 @@ public class InstantSend {
             }*/
         }
 
-        if(valueOut.isGreaterThan(Coin.valueOf((int) context.sporkManager.getSporkValue(SporkManager.SPORK_5_INSTANTSEND_MAX_VALUE), 0))){
+        if(valueOut.isGreaterThan(Coin.valueOf((int) context.sporkManager.getSporkValue(SporkManager.SPORK_5_MAX_VALUE), 0))){
             log.info("instantsend-IsIXTXValid - Transaction value too high - {}\n", txCollateral.toString());
             return false;
         }
@@ -800,7 +800,7 @@ public class InstantSend {
     boolean isLockedInstantSendTransaction(Sha256Hash txHash)
     {
         if(!context.allowInstantXinLiteMode() /*|| fLargeWorkForkFound || fLargeWorkInvalidChainFound */||
-                !context.sporkManager.isSporkActive(SporkManager.SPORK_2_INSTANTSEND_ENABLED)) return false;
+                !context.sporkManager.isSporkActive(SporkManager.SPORK_2_SWIFTTX)) return false;
 
        try {
            lock.lock();
@@ -1123,7 +1123,7 @@ public class InstantSend {
     public int getTransactionLockSignatures(Sha256Hash txHash)
     {
         //if(fLargeWorkForkFound || fLargeWorkInvalidChainFound) return -2;
-        if(!context.sporkManager.isSporkActive(SporkManager.SPORK_2_INSTANTSEND_ENABLED)) return -3;
+        if(!context.sporkManager.isSporkActive(SporkManager.SPORK_2_SWIFTTX)) return -3;
         if(!context.allowInstantXinLiteMode()) return -1;
 
         TransactionLock tlock = mapTxLocks.get(txHash);

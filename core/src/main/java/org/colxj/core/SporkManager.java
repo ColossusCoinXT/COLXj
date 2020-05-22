@@ -12,17 +12,21 @@ import java.util.HashMap;
  */
 public class SporkManager {
     private static final Logger log = LoggerFactory.getLogger(SporkManager.class);
+    private String strSporkKey;
 
-    Context context;
     AbstractBlockChain blockChain;
     HashMap<Sha256Hash, SporkMessage> mapSporks;
     HashMap<Integer, SporkMessage> mapSporksActive;
 
-    SporkManager(Context context)
+    SporkManager()
     {
-        this.context = context;
         mapSporks = new HashMap<Sha256Hash, SporkMessage>();
         mapSporksActive = new HashMap<Integer, SporkMessage>();
+    }
+
+    void setSporkKey(String key)
+    {
+        this.strSporkKey = key;
     }
 
     void setBlockChain(AbstractBlockChain blockChain)
@@ -31,21 +35,17 @@ public class SporkManager {
     }
 
     void processSpork(Peer from, SporkMessage spork) {
-        if (blockChain == null) {
-            log.error("{}. blockChain is null", this);
-            return;
-        }
+        int height = -1;
+        if (blockChain != null)
+            height = blockChain.getBestChainHeight();
 
         Sha256Hash hash = spork.getHash();
         if (mapSporksActive.containsKey(spork.nSporkID)) {
             if (mapSporksActive.get(spork.nSporkID).nTimeSigned >= spork.nTimeSigned) {
-                log.info("spork - seen "+hash.toString()+" block " + blockChain.getBestChainHeight());
+                log.info("spork - seen {} block {}", hash.toString(), height);
                 return;
             }
         }
-
-        //log.info("spork - new "+hash.toString()+" ID "+spork.nSporkID+" Time "+spork.nTimeSigned+" Value " + spork.nValue + " Signature " + Utils.HEX.encode(spork.sig.bytes));
-        //log.info("spork hash bytes: " + Utils.HEX.encode(spork.getBytes()));
 
         if (!checkSignature(spork)) {
             log.error("{}. Invalid spork signature {}.", this, spork.nSporkID);
@@ -54,55 +54,56 @@ public class SporkManager {
 
         mapSporks.put(hash, spork);
         mapSporksActive.put(spork.nSporkID, spork);
-        log.info("spork - got updated spork "+hash.toString()+" block " +blockChain.getBestChainHeight());
+        log.info("spork - got updated spork {} block {}", hash.toString(), height);
     }
 
-    public static final int SPORK_2_INSTANTSEND_ENABLED                            = 10001;
-    public static final int SPORK_3_INSTANTSEND_BLOCK_FILTERING                    = 10002;
-    public static final int SPORK_5_INSTANTSEND_MAX_VALUE                          = 10004;
-    public static final int SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT                 = 10007;
-    public static final int SPORK_9_SUPERBLOCKS_ENABLED                            = 10008;
-    public static final int SPORK_10_MASTERNODE_PAY_UPDATED_NODES                  = 10009;
-    public static final int SPORK_12_RECONSIDER_BLOCKS                             = 10011;
-    public static final int SPORK_13_OLD_SUPERBLOCK_FLAG                           = 10012;
-    public static final int SPORK_14_REQUIRE_SENTINEL_FLAG                         = 10013;
+    public static final int SPORK_2_SWIFTTX = 10001;
+    public static final int SPORK_3_SWIFTTX_BLOCK_FILTERING = 10002;
+    public static final int SPORK_5_MAX_VALUE = 10004;
+    public static final int SPORK_7_MASTERNODE_SCANNING = 10006;
+    public static final int SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT = 10007;
+    public static final int SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT = 10008;
+    public static final int SPORK_10_MASTERNODE_PAY_UPDATED_NODES = 10009;
+    public static final int SPORK_13_ENABLE_SUPERBLOCKS = 10012;
+    public static final int SPORK_14_NEW_PROTOCOL_ENFORCEMENT = 10013;
+    public static final int SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2 = 10014;
+    public static final int SPORK_17_FEE_PAYMENT_ENFORCEMENT = 10016;
+    public static final int SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT = 10017;
+    public static final int SPORK_19_MAX_REORGANIZATION_DEPTH = 10018;
+    public static final int SPORK_20_ZEROCOIN_MAINTENANCE_MODE = 10019;
+    public static final int SPORK_21_ENFORCE_MIN_TX_FEE = 10020;
+    public static final int SPORK_22_TX_FEE_VALUE = 10021;
+    public static final int SPORK_23_LIMIT_BLOCK_TX = 10022;
+    public static final int SPORK_24_BLOCK_TX_VALUE = 10023;
+    public static final int SPORK_25_RESERVED = 10024;
 
-    public static final long SPORK_2_INSTANTSEND_ENABLED_DEFAULT                = 0;            // ON
-    public static final long SPORK_3_INSTANTSEND_BLOCK_FILTERING_DEFAULT        = 0;            // ON
-    public static final long SPORK_5_INSTANTSEND_MAX_VALUE_DEFAULT              = 1000;         // 1000 DASH
-    public static final long SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT     = 4070908800L;// OFF
-    public static final long SPORK_9_SUPERBLOCKS_ENABLED_DEFAULT                = 4070908800L;// OFF
-    public static final long SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT      = 4070908800L;// OFF
-    public static final long SPORK_12_RECONSIDER_BLOCKS_DEFAULT                 = 0;            // 0 BLOCKS
-    public static final long SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT               = 4070908800L;// OFF
-    public static final long SPORK_14_REQUIRE_SENTINEL_FLAG_DEFAULT             = 4070908800L;// OFF
+    public static final long SPORK_2_SWIFTTX_DEFAULT = 978307200;                          //2001-1-1
+    public static final long SPORK_3_SWIFTTX_BLOCK_FILTERING_DEFAULT = 1424217600;         //2015-2-18
+    public static final long SPORK_5_MAX_VALUE_DEFAULT = 1000000;                          //1'000'000 COLX
+    public static final long SPORK_7_MASTERNODE_SCANNING_DEFAULT = 978307200;              //2001-1-1
+    public static final long SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT = 4070908800L; //OFF
+    public static final long SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT_DEFAULT = 4070908800L;  //OFF
+    public static final long SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT = 4070908800L;  //OFF
+    public static final long SPORK_13_ENABLE_SUPERBLOCKS_DEFAULT = 4070908800L;            //OFF
+    public static final long SPORK_14_NEW_PROTOCOL_ENFORCEMENT_DEFAULT = 4070908800L;      //OFF
+    public static final long SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2_DEFAULT = 4070908800L;    //OFF
+    public static final long SPORK_17_FEE_PAYMENT_ENFORCEMENT_DEFAULT = 4070908800L;       //OFF
+    public static final long SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT_DEFAULT = 4070908800L;   //OFF
+    public static final long SPORK_19_MAX_REORGANIZATION_DEPTH_DEFAULT = 1000;             //1000 blocks
+    public static final long SPORK_20_ZEROCOIN_MAINTENANCE_MODE_DEFAULT = 4070908800L;     //OFF
+    public static final long SPORK_21_ENFORCE_MIN_TX_FEE_DEFAULT = 4070908800L;            //OFF
+    public static final long SPORK_22_TX_FEE_VALUE_DEFAULT = 10;                           //10 COLX
+    public static final long SPORK_23_LIMIT_BLOCK_TX_DEFAULT = 4070908800L;                //OFF
+    public static final long SPORK_24_BLOCK_TX_VALUE_DEFAULT = 1;                          //1 tx per block
+    public static final long SPORK_25_RESERVED_DEFAULT = 4070908800L;                      //OFF
 
-    // grab the spork, otherwise say it's off
     public boolean isSporkActive(int nSporkID)
     {
-        long r = -1;
-
-        if(mapSporksActive.containsKey(nSporkID)){
-            r = mapSporksActive.get(nSporkID).nValue;
-        } else {
-            switch (nSporkID) {
-                case SPORK_2_INSTANTSEND_ENABLED:               r = SPORK_2_INSTANTSEND_ENABLED_DEFAULT; break;
-                case SPORK_3_INSTANTSEND_BLOCK_FILTERING:       r = SPORK_3_INSTANTSEND_BLOCK_FILTERING_DEFAULT; break;
-                case SPORK_5_INSTANTSEND_MAX_VALUE:             r = SPORK_5_INSTANTSEND_MAX_VALUE_DEFAULT; break;
-                case SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT:    r = SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT; break;
-                case SPORK_9_SUPERBLOCKS_ENABLED:               r = SPORK_9_SUPERBLOCKS_ENABLED_DEFAULT; break;
-                case SPORK_10_MASTERNODE_PAY_UPDATED_NODES:     r = SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT; break;
-                case SPORK_12_RECONSIDER_BLOCKS:                r = SPORK_12_RECONSIDER_BLOCKS_DEFAULT; break;
-                case SPORK_13_OLD_SUPERBLOCK_FLAG:              r = SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT; break;
-                case SPORK_14_REQUIRE_SENTINEL_FLAG:            r = SPORK_14_REQUIRE_SENTINEL_FLAG_DEFAULT; break;
-                default:
-                    log.info("spork", "CSporkManager::IsSporkActive -- Unknown Spork ID" + nSporkID);
-                    r = 4070908800L; // 2099-1-1 i.e. off by default
-                    break;
-            }
-        }
-
-        return r < Utils.currentTimeSeconds();
+        long r = getSporkValue(nSporkID);
+        if (r < 0)
+            return  false;
+        else
+            return r < Utils.currentTimeSeconds();
     }
 
     // grab the value of the spork on the network, or the default
@@ -114,17 +115,27 @@ public class SporkManager {
             return mapSporksActive.get(nSporkID).nValue;
         } else {
             switch (nSporkID) {
-                case SPORK_2_INSTANTSEND_ENABLED:               return SPORK_2_INSTANTSEND_ENABLED_DEFAULT;
-                case SPORK_3_INSTANTSEND_BLOCK_FILTERING:       return SPORK_3_INSTANTSEND_BLOCK_FILTERING_DEFAULT;
-                case SPORK_5_INSTANTSEND_MAX_VALUE:             return SPORK_5_INSTANTSEND_MAX_VALUE_DEFAULT;
-                case SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT:    return SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT;
-                case SPORK_9_SUPERBLOCKS_ENABLED:               return SPORK_9_SUPERBLOCKS_ENABLED_DEFAULT;
-                case SPORK_10_MASTERNODE_PAY_UPDATED_NODES:     return SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT;
-                case SPORK_12_RECONSIDER_BLOCKS:                return SPORK_12_RECONSIDER_BLOCKS_DEFAULT;
-                case SPORK_13_OLD_SUPERBLOCK_FLAG:              return SPORK_13_OLD_SUPERBLOCK_FLAG_DEFAULT;
-                case SPORK_14_REQUIRE_SENTINEL_FLAG:            return SPORK_14_REQUIRE_SENTINEL_FLAG_DEFAULT;
+                case SPORK_2_SWIFTTX: return SPORK_2_SWIFTTX_DEFAULT;
+                case SPORK_3_SWIFTTX_BLOCK_FILTERING: return SPORK_3_SWIFTTX_BLOCK_FILTERING_DEFAULT;
+                case SPORK_5_MAX_VALUE: return SPORK_5_MAX_VALUE_DEFAULT;
+                case SPORK_7_MASTERNODE_SCANNING: return SPORK_7_MASTERNODE_SCANNING_DEFAULT;
+                case SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT: return SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT_DEFAULT;
+                case SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT: return SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT_DEFAULT;
+                case SPORK_10_MASTERNODE_PAY_UPDATED_NODES: return SPORK_10_MASTERNODE_PAY_UPDATED_NODES_DEFAULT;
+                case SPORK_13_ENABLE_SUPERBLOCKS: return SPORK_13_ENABLE_SUPERBLOCKS_DEFAULT;
+                case SPORK_14_NEW_PROTOCOL_ENFORCEMENT: return SPORK_14_NEW_PROTOCOL_ENFORCEMENT_DEFAULT;
+                case SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2: return SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2_DEFAULT;
+                case SPORK_17_FEE_PAYMENT_ENFORCEMENT: return SPORK_17_FEE_PAYMENT_ENFORCEMENT_DEFAULT;
+                case SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT: return SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT_DEFAULT;
+                case SPORK_19_MAX_REORGANIZATION_DEPTH: return SPORK_19_MAX_REORGANIZATION_DEPTH_DEFAULT;
+                case SPORK_20_ZEROCOIN_MAINTENANCE_MODE: return SPORK_20_ZEROCOIN_MAINTENANCE_MODE_DEFAULT;
+                case SPORK_21_ENFORCE_MIN_TX_FEE: return SPORK_21_ENFORCE_MIN_TX_FEE_DEFAULT;
+                case SPORK_22_TX_FEE_VALUE: return SPORK_22_TX_FEE_VALUE_DEFAULT;
+                case SPORK_23_LIMIT_BLOCK_TX: return SPORK_23_LIMIT_BLOCK_TX_DEFAULT;
+                case SPORK_24_BLOCK_TX_VALUE: return SPORK_24_BLOCK_TX_VALUE_DEFAULT;
+                case SPORK_25_RESERVED: return SPORK_25_RESERVED_DEFAULT;
                 default:
-                    log.info("spork", "CSporkManager::GetSporkValue -- Unknown Spork ID "+ nSporkID);
+                    log.error("{}. Unknown spork {}.", this, nSporkID);
                     return -1;
             }
         }
@@ -133,7 +144,7 @@ public class SporkManager {
     private boolean checkSignature(SporkMessage spork)
     {
         String strMessage = "" + spork.nSporkID + spork.nValue + spork.nTimeSigned;
-        PublicKey pubkey = new PublicKey(Utils.HEX.decode(context.getParams().getSporkKey()));
+        PublicKey pubkey = new PublicKey(Utils.HEX.decode(strSporkKey));
 
         StringBuilder errorMessage = new StringBuilder();
         if(!DarkSendSigner.verifySporkMessage(pubkey, spork.sig, strMessage, errorMessage)){
