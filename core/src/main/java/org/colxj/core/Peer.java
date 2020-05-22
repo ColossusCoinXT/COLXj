@@ -672,6 +672,9 @@ public class Peer extends PeerSocketHandler {
             log.warn("Connected to a peer speaking protocol version {} but need {}, closing",
                     vPeerVersionMessage.clientVersion, version);
             close();
+        } else {
+            log.info("{}. Requesting sporks.", this);
+            sendMessage(new GetSporksMessage(params));
         }
     }
 

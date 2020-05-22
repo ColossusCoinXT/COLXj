@@ -1,5 +1,7 @@
 package org.colxj.core;
 
+import com.hashengineering.crypto.Hash9;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -57,40 +59,36 @@ public class SporkMessage extends Message{
 
     @Override
     protected void parse() throws ProtocolException {
-
-
         nSporkID = (int)readUint32();
-
         nValue = readInt64();
-
         nTimeSigned = readInt64();
-
         sig = new MasternodeSignature(params, payload, cursor);
         cursor += sig.getMessageSize();
-
         length = cursor - offset;
-
     }
 
     @Override
     protected void bitcoinSerializeToStream(OutputStream stream) throws IOException {
-
         Utils.uint32ToByteStreamLE(nSporkID, stream);
         Utils.int64ToByteStreamLE(nValue, stream);
-        Utils.int64ToByteStreamLE(nValue, stream);
-
+        Utils.int64ToByteStreamLE(nTimeSigned, stream);
         sig.bitcoinSerialize(stream);
     }
 
     @Override
     public Sha256Hash getHash()
     {
+        return Sha256Hash.wrapReversed(Hash9.digest(getBytes()));
+    }
+
+    public byte[] getBytes()
+    {
         try {
             ByteArrayOutputStream bos = new UnsafeByteArrayOutputStream(HASH_SIZE);
-            Utils.uint32ToByteStreamLE(nSporkID, bos);
+            Utils.int64ToByteStreamLE(nSporkID, bos); // for some reason it is serialized to 64bit value for hashing in desktop wallet
             Utils.int64ToByteStreamLE(nValue, bos);
-            Utils.int64ToByteStreamLE(nValue, bos);
-            return Sha256Hash.wrapReversed(x11Digest(bos.toByteArray()));
+            Utils.int64ToByteStreamLE(nTimeSigned, bos);
+            return bos.toByteArray();
         } catch (IOException e) {
             throw new RuntimeException(e); // Cannot happen.
         }

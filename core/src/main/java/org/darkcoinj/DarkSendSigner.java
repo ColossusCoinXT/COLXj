@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Base64;
 
 import java.security.SignatureException;
+import java.util.Arrays;
 
 /**
  * Created by Eric on 2/8/2015.
@@ -102,6 +103,48 @@ public class DarkSendSigner {
             return false;
         }
     }
+
+    public static boolean verifySporkMessage(PublicKey pubkey, MasternodeSignature vchSig, String strMessage, StringBuilder errorMessage)
+    {
+        try {
+            // prepare spork message for hashing
+            int magicLen = Utils.BITCOIN_SIGNED_MESSAGE_HEADER.length();
+            byte dataToHash [] = new byte[2 + magicLen + strMessage.length()];
+            dataToHash[0] = (byte)magicLen; // header len
+            // header data
+            System.arraycopy(Utils.BITCOIN_SIGNED_MESSAGE_HEADER.getBytes(), 0, dataToHash, 1, magicLen);
+            dataToHash[magicLen + 1] = (byte)strMessage.length(); // message len
+            // message data
+            System.arraycopy(strMessage.getBytes(), 0, dataToHash, 2 + magicLen, strMessage.length());
+
+            Sha256Hash hash2 = Sha256Hash.twiceOf(dataToHash);
+            PublicKey pubkey2 = PublicKey.recoverCompact(hash2, vchSig);
+            if (Arrays.equals(pubkey.getId(), pubkey2.getId()))
+                return true;
+            else
+            {
+                errorMessage.append("keys don't match, input: ");
+                errorMessage.append(Utils.HEX.encode(pubkey.getId()));
+                errorMessage.append(", from signature: ");
+                errorMessage.append(Utils.HEX.encode(pubkey2.getId()));
+                errorMessage.append(", hash2: ");
+                errorMessage.append(Utils.HEX.encode(hash2.getBytes()));
+                errorMessage.append(", message: ");
+                errorMessage.append(Utils.HEX.encode(dataToHash));
+                return false;
+            }
+        }
+        catch(SignatureException ex)
+        {
+            errorMessage.append("signature exception: ");
+            errorMessage.append(ex.toString());
+            errorMessage.append(", message: ");
+            errorMessage.append(strMessage);
+            errorMessage.append(", sig: " + Base64.toBase64String(vchSig.getBytes()));
+            return false;
+        }
+    }
+
     public static boolean verifyMessage1(PublicKey pubkey, MasternodeSignature vchSig, byte[] message, StringBuilder errorMessage)
     {
         //int length = Utils.BITCOIN_SIGNED_MESSAGE_HEADER.length()+strMessage.length();
