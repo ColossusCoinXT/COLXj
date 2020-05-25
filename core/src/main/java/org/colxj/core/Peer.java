@@ -582,7 +582,8 @@ public class Peer extends PeerSocketHandler {
         }
         else
         {
-            log.warn("{}: Received unhandled message: {}", this, m);
+            if (!(m instanceof DarkSendElectionEntryPingMessage)) // ignore for now to cleanup log output
+                log.warn("{}: Received unhandled message: {}", this, m);
         }
     }
 
