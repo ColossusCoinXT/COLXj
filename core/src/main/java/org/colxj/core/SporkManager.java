@@ -43,8 +43,8 @@ public class SporkManager {
 
         Sha256Hash hash = spork.getHash();
         if (mapSporksActive.containsKey(spork.nSporkID)) {
-            if (mapSporksActive.get(spork.nSporkID).nTimeSigned >= spork.nTimeSigned) {
-                log.info("spork - seen {} block {}", hash.toString(), height);
+            if (mapSporksActive.get(spork.nSporkID).nTimeSigned > spork.nTimeSigned) {
+                log.info("spork - seen {} time signed {}", spork.nSporkID, spork.nTimeSigned);
                 return;
             }
         }
@@ -56,7 +56,7 @@ public class SporkManager {
 
         mapSporks.put(hash, spork);
         mapSporksActive.put(spork.nSporkID, spork);
-        log.info("spork - got updated spork {} block {}", hash.toString(), height);
+        log.info("spork - got updated spork {}, time signed {}, block {}", spork.nSporkID, spork.nTimeSigned, height);
     }
 
     public static final int SPORK_2_SWIFTTX = 10001;
