@@ -26,30 +26,6 @@ public class SporkManager {
         mapSporksActive = new HashMap<Integer, SporkMessage>();
     }
 
-    ArrayList<String> getSporkList() {
-        ArrayList<String> sporkList = new ArrayList<String>();
-        sporkList.add(String.format("SPORK_2_SWIFTTX = %d", getSporkValue(SPORK_2_SWIFTTX)));
-        sporkList.add(String.format("SPORK_3_SWIFTTX_BLOCK_FILTERING = %d", getSporkValue(SPORK_3_SWIFTTX_BLOCK_FILTERING)));
-        sporkList.add(String.format("SPORK_5_MAX_VALUE = %d", getSporkValue(SPORK_5_MAX_VALUE)));
-        sporkList.add(String.format("SPORK_7_MASTERNODE_SCANNING = %d", getSporkValue(SPORK_7_MASTERNODE_SCANNING)));
-        sporkList.add(String.format("SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT = %d", getSporkValue(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)));
-        sporkList.add(String.format("SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT = %d", getSporkValue(SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT)));
-        sporkList.add(String.format("SPORK_10_MASTERNODE_PAY_UPDATED_NODES = %d", getSporkValue(SPORK_10_MASTERNODE_PAY_UPDATED_NODES)));
-        sporkList.add(String.format("SPORK_13_ENABLE_SUPERBLOCKS = %d", getSporkValue(SPORK_13_ENABLE_SUPERBLOCKS)));
-        sporkList.add(String.format("SPORK_14_NEW_PROTOCOL_ENFORCEMENT = %d", getSporkValue(SPORK_14_NEW_PROTOCOL_ENFORCEMENT)));
-        sporkList.add(String.format("SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2 = %d", getSporkValue(SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2)));
-        sporkList.add(String.format("SPORK_17_FEE_PAYMENT_ENFORCEMENT = %d", getSporkValue(SPORK_17_FEE_PAYMENT_ENFORCEMENT)));
-        sporkList.add(String.format("SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT = %d", getSporkValue(SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT)));
-        sporkList.add(String.format("SPORK_19_MAX_REORGANIZATION_DEPTH = %d", getSporkValue(SPORK_19_MAX_REORGANIZATION_DEPTH)));
-        sporkList.add(String.format("SPORK_20_ZEROCOIN_MAINTENANCE_MODE = %d", getSporkValue(SPORK_20_ZEROCOIN_MAINTENANCE_MODE)));
-        sporkList.add(String.format("SPORK_21_ENFORCE_MIN_TX_FEE = %d", getSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE)));
-        sporkList.add(String.format("SPORK_22_TX_FEE_VALUE = %d", getSporkValue(SPORK_22_TX_FEE_VALUE)));
-        sporkList.add(String.format("SPORK_23_LIMIT_BLOCK_TX = %d", getSporkValue(SPORK_23_LIMIT_BLOCK_TX)));
-        sporkList.add(String.format("SPORK_24_BLOCK_TX_VALUE = %d", getSporkValue(SPORK_24_BLOCK_TX_VALUE)));
-        sporkList.add(String.format("SPORK_25_RESERVED = %d", getSporkValue(SPORK_25_RESERVED)));
-        return sporkList;
-    }
-
     void setSporkKey(String key)
     {
         this.strSporkKey = key;
@@ -165,6 +141,30 @@ public class SporkManager {
                     return -1;
             }
         }
+    }
+
+    public ArrayList<String> getSporkList() {
+        ArrayList<String> sporkList = new ArrayList<String>();
+        sporkList.add(String.format("SPORK_2_SWIFTTX = %d", getSporkValue(SPORK_2_SWIFTTX)));
+        sporkList.add(String.format("SPORK_3_SWIFTTX_BLOCK_FILTERING = %d", getSporkValue(SPORK_3_SWIFTTX_BLOCK_FILTERING)));
+        sporkList.add(String.format("SPORK_5_MAX_VALUE = %d", getSporkValue(SPORK_5_MAX_VALUE)));
+        sporkList.add(String.format("SPORK_7_MASTERNODE_SCANNING = %d", getSporkValue(SPORK_7_MASTERNODE_SCANNING)));
+        sporkList.add(String.format("SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT = %d", getSporkValue(SPORK_8_MASTERNODE_PAYMENT_ENFORCEMENT)));
+        sporkList.add(String.format("SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT = %d", getSporkValue(SPORK_9_MASTERNODE_BUDGET_ENFORCEMENT)));
+        sporkList.add(String.format("SPORK_10_MASTERNODE_PAY_UPDATED_NODES = %d", getSporkValue(SPORK_10_MASTERNODE_PAY_UPDATED_NODES)));
+        sporkList.add(String.format("SPORK_13_ENABLE_SUPERBLOCKS = %d", getSporkValue(SPORK_13_ENABLE_SUPERBLOCKS)));
+        sporkList.add(String.format("SPORK_14_NEW_PROTOCOL_ENFORCEMENT = %d", getSporkValue(SPORK_14_NEW_PROTOCOL_ENFORCEMENT)));
+        sporkList.add(String.format("SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2 = %d", getSporkValue(SPORK_15_NEW_PROTOCOL_ENFORCEMENT_2)));
+        sporkList.add(String.format("SPORK_17_FEE_PAYMENT_ENFORCEMENT = %d", getSporkValue(SPORK_17_FEE_PAYMENT_ENFORCEMENT)));
+        sporkList.add(String.format("SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT = %d", getSporkValue(SPORK_18_DEVFUND_PAYMENT_ENFORCEMENT)));
+        sporkList.add(String.format("SPORK_19_MAX_REORGANIZATION_DEPTH = %d", getSporkValue(SPORK_19_MAX_REORGANIZATION_DEPTH)));
+        sporkList.add(String.format("SPORK_20_ZEROCOIN_MAINTENANCE_MODE = %d", getSporkValue(SPORK_20_ZEROCOIN_MAINTENANCE_MODE)));
+        sporkList.add(String.format("SPORK_21_ENFORCE_MIN_TX_FEE = %d", getSporkValue(SPORK_21_ENFORCE_MIN_TX_FEE)));
+        sporkList.add(String.format("SPORK_22_TX_FEE_VALUE = %d", getSporkValue(SPORK_22_TX_FEE_VALUE)));
+        sporkList.add(String.format("SPORK_23_LIMIT_BLOCK_TX = %d", getSporkValue(SPORK_23_LIMIT_BLOCK_TX)));
+        sporkList.add(String.format("SPORK_24_BLOCK_TX_VALUE = %d", getSporkValue(SPORK_24_BLOCK_TX_VALUE)));
+        sporkList.add(String.format("SPORK_25_RESERVED = %d", getSporkValue(SPORK_25_RESERVED)));
+        return sporkList;
     }
 
     private boolean checkSignature(SporkMessage spork)
