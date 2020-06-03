@@ -347,6 +347,11 @@ public class MemoryFullPrunedBlockStore implements FullPrunedBlockStore {
         fullBlockMap = null;
         transactionOutputMap = null;
     }
+
+    @Override
+    public void reset() {
+        close();
+    }
     
     @Override
     @Nullable

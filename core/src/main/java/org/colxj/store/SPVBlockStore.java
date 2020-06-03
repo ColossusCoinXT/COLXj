@@ -288,6 +288,15 @@ public class SPVBlockStore implements BlockStore {
     }
 
     @Override
+    public void reset() throws BlockStoreException {
+        try {
+            initNewStore(this.params);
+        } catch (Exception e) {
+            throw new BlockStoreException(e);
+        }
+    }
+
+    @Override
     public NetworkParameters getParams() {
         return params;
     }

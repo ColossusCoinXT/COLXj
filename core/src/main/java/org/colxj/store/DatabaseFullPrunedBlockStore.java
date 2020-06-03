@@ -467,6 +467,11 @@ public abstract class DatabaseFullPrunedBlockStore implements FullPrunedBlockSto
         allConnections.clear();
     }
 
+    @Override
+    public synchronized void reset() throws BlockStoreException {
+        resetStore();
+    }
+
     /**
      * <p>Check if a tables exists within the database.</p>
      *

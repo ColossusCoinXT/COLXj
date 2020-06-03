@@ -60,6 +60,9 @@ public interface BlockStore {
     /** Closes the store. */
     void close() throws BlockStoreException;
 
+    /** Destroy the store. */
+    void reset() throws BlockStoreException;
+
     /**
      * Get the {@link org.colxj.core.NetworkParameters} of this store.
      * @return The network params.

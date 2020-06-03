@@ -80,6 +80,11 @@ public class MemoryBlockStore implements BlockStore {
     }
 
     @Override
+    public void reset() {
+        blockMap = null;
+    }
+
+    @Override
     public NetworkParameters getParams() {
         return params;
     }

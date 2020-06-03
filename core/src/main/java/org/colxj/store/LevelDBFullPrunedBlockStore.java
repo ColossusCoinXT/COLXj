@@ -414,6 +414,11 @@ public class LevelDBFullPrunedBlockStore implements FullPrunedBlockStore {
     }
 
     @Override
+    public void reset() throws BlockStoreException {
+        createNewStore(this.params);
+    }
+
+    @Override
     public NetworkParameters getParams() {
         return params;
     }
